@@ -249,6 +249,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 color: _isMonthSelected == false ? Colors.teal : Colors.black38,
               ),
+              FlatButton(
+                child: Text(
+                  'push',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (ctx) => MyHomePage(title: 'second')));
+                },
+                color: Colors.teal,
+              ),
             ],
           ),
         ],
