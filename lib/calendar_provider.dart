@@ -47,7 +47,7 @@ class CalendarProvider extends ChangeNotifier {
 
   set lastClickDateModel(DateModel value) {
     _lastClickDateModel = value;
-    print("lastClickDateModel:$lastClickDateModel");
+    printY("set lastClickDateModel:$lastClickDateModel");
   }
 
   DateModel get selectDateModel => _selectDateModel;
@@ -56,13 +56,14 @@ class CalendarProvider extends ChangeNotifier {
     _selectDateModel = value;
     LogUtil.log(
         TAG: this.runtimeType,
-        message: "selectDateModel change:${selectDateModel}");
+        message: "selectDateModel change:$selectDateModel");
 //    notifyListeners();
   }
 
   //根据lastClickDateModel，去计算需要展示的星期视图的初始index
   int get weekPageIndex {
     //计算当前星期视图的index
+    printY('计算当前星期视图的index  = > lastClickDateModel$lastClickDateModel');
     DateModel dateModel = lastClickDateModel;
     DateTime firstWeek = calendarConfiguration.weekList[0].getDateTime();
     int index = 0;
@@ -77,7 +78,8 @@ class CalendarProvider extends ChangeNotifier {
       }
     }
 
-    print("lastClickDateModel:$lastClickDateModel,weekPageIndex:$index");
+    printY(
+        "lastClickDateModel:$lastClickDateModel,weekPageIndex:$index, totalHeight:$totalHeight");
     return index;
   }
 
@@ -98,8 +100,9 @@ class CalendarProvider extends ChangeNotifier {
       }
     }
 
-    print("lastClickDateModel:$lastClickDateModel,monthPageIndex:$index");
-    return index + 1;
+    printY(
+        "lastClickDateModel:$lastClickDateModel, monthPageIndex:$index, totalHeight:$totalHeight");
+    return index;
   }
 
   ValueNotifier<bool> expandStatus; //当前展开状态
@@ -121,8 +124,6 @@ class CalendarProvider extends ChangeNotifier {
   }) {
     LogUtil.log(TAG: this.runtimeType, message: "CalendarProvider initData");
     this.calendarConfiguration = calendarConfiguration;
-    print(
-        "calendarConfiguration.defaultSelectedDateList:${calendarConfiguration.defaultSelectedDateList}");
     this
         .selectedDateList
         .addAll(this.calendarConfiguration.defaultSelectedDateList);
@@ -139,7 +140,7 @@ class CalendarProvider extends ChangeNotifier {
     this.lastClickDateModel = selectDateModel != null
         ? selectDateModel
         : DateModel.fromDateTime(DateTime.now())
-      ..day = 15;
+      ..isSelected = true;
     //初始化展示状态
     if (calendarConfiguration.showMode ==
             CalendarConstants.MODE_SHOW_ONLY_WEEK ||
@@ -168,7 +169,7 @@ class CalendarProvider extends ChangeNotifier {
       //如果指定了itemSize的大小，那就按照itemSize的大小去绘制
     }
 
-    //如果第一个页面展示的是月视图，需要计算下初始化的高度
+    ///如果第一个页面展示的是月视图，需要计算下初始化的高度
     if (calendarConfiguration.showMode ==
             CalendarConstants.MODE_SHOW_ONLY_MONTH ||
         calendarConfiguration.showMode ==
@@ -182,6 +183,7 @@ class CalendarProvider extends ChangeNotifier {
     } else {
       totalHeight = calendarConfiguration.itemSize;
     }
+    printY('totalHeight: $totalHeight');
   }
 
   //退出的时候，清除数据

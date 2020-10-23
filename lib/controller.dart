@@ -122,6 +122,7 @@ class CalendarController {
     int maxYearMonth = calendarConfiguration.maxYearMonth;
     int nowYear = calendarConfiguration.nowYear;
     int nowMonth = calendarConfiguration.nowMonth;
+    int nowDay = calendarConfiguration.selectDateModel?.day ?? -1;
 
     if (showMode != CalendarConstants.MODE_SHOW_ONLY_WEEK) {
       //初始化pageController,initialPage默认是当前时间对于的页面
@@ -166,11 +167,16 @@ class CalendarController {
         nowYear = DateTime.now().year;
         nowMonth = DateTime.now().month;
       }
-      DateTime nowTime = new DateTime(nowYear, nowMonth, 15);
+      int nowDay = 15; // 默认月中
+      // 如果设置了 默认选择的时间 就取默认选择的时间天数，否则为当前时间
+      DateModel currentModel = calendarProvider.selectDateModel ?? calendarProvider.selectedDateList?.toList()[0] ?? DateModel.fromDateTime(DateTime.now());
+      if(currentModel != null){
+        nowDay = currentModel.day;
+      }
+      DateTime nowTime = new DateTime(nowYear, nowMonth, nowDay);
       DateTime firstDayOfMonth = DateTime(minYear, minYearMonth, 1);
       //计算第一个星期的第一天的日期
-      DateTime firstWeekDate =
-          firstDayOfMonth.add(Duration(days: -(firstDayOfMonth.weekday - 1)));
+      DateTime firstWeekDate = firstDayOfMonth.add(Duration(days: -(firstDayOfMonth.weekday - 1)));
 
       DateTime lastDay = DateTime(maxYear, maxYearMonth,
           DateUtil.getMonthDaysCount(maxYear, maxYearMonth));
@@ -279,34 +285,29 @@ class CalendarController {
   Future<bool> previousPage() async {
     if (calendarProvider.expandStatus.value == true) {
       //月视图
-      int currentIndex =
-          calendarProvider.calendarConfiguration.monthController.page.toInt();
+      int currentIndex = calendarProvider.calendarConfiguration.monthController.page.toInt();
       if (currentIndex == 0) {
         return false;
       } else {
-        calendarProvider.calendarConfiguration.monthController
-            .previousPage(duration: DEFAULT_DURATION, curve: Curves.ease);
-        calendarProvider.calendarConfiguration.monthChangeListeners
-            .forEach((listener) {
-          listener(monthList[currentIndex - 1].year,
-              monthList[currentIndex - 1].month);
+        calendarProvider.calendarConfiguration.monthController.previousPage(duration: DEFAULT_DURATION, curve: Curves.ease);
+        calendarProvider.calendarConfiguration.monthChangeListeners.forEach((listener) {
+          listener(monthList[currentIndex - 1].year, monthList[currentIndex - 1].month);
         });
         DateModel temp = new DateModel();
         temp.year = monthList[currentIndex].year;
         temp.month = monthList[currentIndex].month;
         temp.day = monthList[currentIndex].day + 14;
+        print('298 周视图的变化: $temp');
         calendarProvider.lastClickDateModel = temp;
         return true;
       }
     } else {
       //周视图
-      int currentIndex =
-          calendarProvider.calendarConfiguration.weekController.page.toInt();
+      int currentIndex = calendarProvider.calendarConfiguration.weekController.page.toInt();
       if (currentIndex == 0) {
         return false;
       } else {
-        calendarProvider.calendarConfiguration.weekController
-            .previousPage(duration: DEFAULT_DURATION, curve: Curves.ease);
+        calendarProvider.calendarConfiguration.weekController.previousPage(duration: DEFAULT_DURATION, curve: Curves.ease);
         return true;
       }
     }
@@ -337,6 +338,7 @@ class CalendarController {
         temp.year = monthList[currentIndex].year;
         temp.month = monthList[currentIndex].month;
         temp.day = monthList[currentIndex].day + 14;
+        print('341 周视图的变化: $temp');
         calendarProvider.lastClickDateModel = temp;
         return true;
       }

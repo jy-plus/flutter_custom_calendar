@@ -21,3 +21,9 @@ class LogUtil {
     }
   }
 }
+
+void printY(Object object) {
+  if (kDebugMode) {
+    print(object);
+  }
+}
