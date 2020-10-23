@@ -46,7 +46,6 @@ class _WeekViewPagerState extends State<WeekViewPager>
         Provider.of<CalendarProvider>(context, listen: false);
     CalendarConfiguration configuration =
         calendarProvider.calendarConfiguration;
-
     return Container(
       height: configuration.itemSize ?? MediaQuery.of(context).size.width / 7,
       child: PageView.builder(
@@ -74,12 +73,12 @@ class _WeekViewPagerState extends State<WeekViewPager>
               listener(firstDayOfWeek.year, firstDayOfWeek.month);
             });
             lastMonth = currentMonth;
-            if (calendarProvider.lastClickDateModel == null ||
-                calendarProvider.lastClickDateModel.month != currentMonth) {
+            if (calendarProvider.lastClickDateModel == null || calendarProvider.lastClickDateModel.month != currentMonth) {
               DateModel temp = new DateModel();
               temp.year = firstDayOfWeek.year;
               temp.month = firstDayOfWeek.month;
               temp.day = firstDayOfWeek.day + 14;
+              print('83 周视图的变化: $temp');
               calendarProvider.lastClickDateModel = temp;
             }
           }
@@ -89,6 +88,7 @@ class _WeekViewPagerState extends State<WeekViewPager>
         controller: calendarProvider.calendarConfiguration.weekController,
         itemBuilder: (context, index) {
           DateModel dateModel = configuration.weekList[index];
+          print('dateModel: $dateModel');
           return new WeekView(
             year: dateModel.year,
             month: dateModel.month,
